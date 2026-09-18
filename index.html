@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" href="assets/pages.css">
+<link rel="stylesheet" href="assets/style.css?v=0cbabd8">
+<link rel="stylesheet" href="assets/pages.css?v=0cbabd8">
 </head>
 <body data-page="home">
 
@@ -109,10 +109,10 @@
   </section>
 </main>
 
-<script src="data/home.js"></script>
-<script src="data/games.js"></script>
-<script src="data/authors.js"></script>
-<script src="assets/app.js"></script>
+<script src="data/home.js?v=0cbabd8"></script>
+<script src="data/games.js?v=0cbabd8"></script>
+<script src="data/authors.js?v=0cbabd8"></script>
+<script src="assets/app.js?v=0cbabd8"></script>
 <script>
 const H = window.EN_HOME, G = window.EN_GAMES.games, esc = EN.esc;
 
@@ -228,6 +228,6 @@ document.getElementById('stats').innerHTML = [
 ].map(([v, l, ry]) => `<div class="stat rv" style="--ry:${ry}deg"><div class="ring"></div><b data-n="${n(v)}">0</b><span>${l}</span></div>`).join('');
 document.getElementById('online').innerHTML = `<i></i>Сейчас на сайте: ${esc(S.guests)} ${EN.plural(n(S.guests), ['гость', 'гостя', 'гостей'])} · ${esc(S.online)} ${EN.plural(n(S.online), ['участник', 'участника', 'участников'])} &nbsp;·&nbsp; Новобранцы за неделю: ${esc(S.newbies)}`;
 </script>
-<script type="module" src="assets/scene.js"></script>
+<script type="module" src="assets/scene.js?v=0cbabd8"></script>
 </body>
 </html>

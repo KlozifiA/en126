@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход на сайт — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="login" data-scene="lite">
+<main class="auth">
+  <div class="stage" style="width:min(480px,100%)">
+    <div class="auth-card" id="card">
+      <div class="eyebrow">// Encounter · 126.en.cx</div>
+      <h1>Вход на сайт</h1>
+      <p class="page-sub">Логин и пароль вводятся на защищённой странице Encounter — сам аккаунт хранится там.</p>
+
+      <ol class="steps">
+        <li><span>Введите <b>логин или id</b> и <b>пароль</b></span></li>
+        <li><span>Выберите игровую сеть: <b>Encounter</b> или <b>QuestUa</b></span></li>
+        <li><span>Отметьте <b>«чужой компьютер»</b>, если входите не со своего устройства</span></li>
+        <li><span>Или войдите в один клик <b>через ВКонтакте</b></span></li>
+      </ol>
+
+      <a class="btn btn-amber" id="go" href="https://126.en.cx/Login.aspx?return=%2f">Перейти ко входу →</a>
+
+      <div class="auth-links">
+        <a href="signup.html">Зарегистрироваться</a>
+        <a href="forgot.html">Восстановить пароль</a>
+      </div>
+      <p class="legal">Авторизовываясь, вы принимаете условия <a href="https://126.en.cx/Manifest.aspx">Генеральной декларации</a>,
+        <a href="https://en.cx/personal">Политики обработки персональных данных</a> и <a href="https://en.cx/oferta">Оферты</a>.</p>
+    </div>
+  </div>
+</main>
+<script src="assets/app.js"></script>
+<script>
+EN.tilt(document.getElementById('card'), 6);
+/* куда вернуться после входа — как параметр return на исходнике */
+const ret = EN.qs('return') || '/';
+document.getElementById('go').href = EN.src('Login.aspx?return=' + encodeURIComponent(ret));
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

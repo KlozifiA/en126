@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Статистика — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="stats" data-scene="lite">
+<main class="page"><div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html">Главная</a> / Статистика</div>
+    <h1 class="page-title"><span class="extrude">Сеть</span> <span class="glow">в цифрах</span></h1>
+    <p class="page-sub">Статистика всей сети Encounter: домены, участники, форумы, игры и фото-галереи.</p>
+    <div id="snap"></div>
+  </div>
+  <div id="root"></div>
+</div></main>
+
+<script src="data/stats.js"></script>
+<script src="data/home.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const S = window.EN_STATS, H = window.EN_HOME, esc = EN.esc, t = S.text;
+document.getElementById('snap').innerHTML = EN.updated(S.updated);
+const n = re => { const m = t.match(re); return m ? +m[1].replace(/\s/g, '') : null; };
+const N = '([\\d\\s\\u00a0]+?)';
+const v = {
+  domains: n(new RegExp('Всего зарегистрировано ' + N + ' домен')),
+  geo: n(new RegExp('из которых ' + N + ' домен')),
+  online: n(new RegExp('всех доменах: ' + N + ' человек')),
+  onlineUsers: n(new RegExp('из которых ' + N + ' участник')),
+  onlineGuests: n(new RegExp('участник\\S* и ' + N + ' гост')),
+  day: n(new RegExp('авторизовал\\S* ' + N + ' участник')),
+  users: n(new RegExp('зарегистрировано: ' + N + ' участник')),
+  teams: n(new RegExp('\\), ' + N + ' команд')),
+  topics: n(new RegExp('форумах ' + N + ' тем')),
+  posts: n(new RegExp('из ' + N + ' сообщени')),
+  polls: n(new RegExp('Всего ' + N + ' голосовани')),
+  votes: n(new RegExp('из ' + N + ' голос[оа]в')),
+  games: n(new RegExp('прошло ' + N + ' игр')),
+  levels: n(new RegExp('из ' + N + ' уровн')),
+  codes: n(new RegExp('введено ' + N + ' код')),
+  galleries: n(new RegExp('создано ' + N + ' фото')),
+  photos: n(new RegExp('из ' + N + ' фотограф')),
+};
+const card = (val, label, sub = '', ry = 0) => `<div class="stat rv" style="--ry:${ry}deg"><div class="ring"></div>
+  <b data-n="${val ?? 0}">0</b><span>${label}</span>${sub ? `<small>${sub}</small>` : ''}</div>`;
+const sec = (title, eyebrow, body) => `<section style="padding:30px 0 50px"><div class="sec-head rv" style="margin-bottom:24px">
+  <div><div class="eyebrow">${eyebrow}</div><h2 class="extrude" style="font-size:clamp(26px,3.4vw,42px)">${title}</h2></div></div>${body}</section>`;
+const hs = H.stats, num = x => +String(x).replace(/\s/g, '');
+
+document.getElementById('root').innerHTML =
+  sec('Домен КМВ', '// 126.en.cx', `<div class="sgrid">
+    ${card(num(hs.domainUsers), 'участников в домене', EN.ext('UserList.aspx', 'список'))}
+    ${card(num(hs.domainTeams), 'команд в домене', EN.ext('Teams/TeamList.aspx', 'список'))}
+    ${card(num(hs.newbies), 'новобранцев за неделю', `сейчас на сайте: ${esc(hs.guests)} гост. · ${esc(hs.online)} уч.`)}
+  </div>`) +
+  sec('Домены', '// 01', `<div class="sgrid">
+    ${card(v.domains, 'доменов зарегистрировано')}
+    ${card(v.geo, 'включены в Географию игры', `${Math.round(v.geo / v.domains * 100)}% от всех`)}
+    ${card(v.online, 'человек онлайн на всех доменах', `${v.onlineUsers} участников и ${v.onlineGuests} гостей · за 5 минут`)}
+  </div>`) +
+  sec('Участники', '// 02', `<div class="leaders">
+    <div class="sgrid" style="grid-template-columns:1fr">
+      ${card(v.users, 'участников в проекте', EN.ext('UserList.aspx?mode=full', 'список'))}
+      ${card(v.teams, 'команд в проекте', EN.ext('Teams/TeamList.aspx?mode=full', 'список'))}
+      ${card(v.day, 'авторизовались за сутки', 'на всех доменах')}
+    </div>
+    <div class="panel rv"><h3>Последние 10 зарегистрировавшихся</h3><p class="sub">По всей сети</p>
+      <ul class="feed" style="margin-top:14px">${S.last.map(u => `<li>
+        <span class="ava${u.domain === '126.en.cx' ? ' me' : ''}">${esc(u.name[0])}</span>
+        <div><b>${EN.user(u.name, u.id)}</b><small>#${esc(u.id)} · ${esc(u.date)}</small></div>
+        <a class="fine" href="https://${esc(u.domain)}/">${esc(u.domain)}${u.domain === '126.en.cx' ? '<span class="here">КМВ</span>' : ''}</a></li>`).join('')}</ul></div>
+  </div>`) +
+  sec('Игры', '// 03', `<div class="sgrid">
+    ${card(v.games, 'игр прошло', '<a class="link" href="archive.html">архив КМВ</a>')}
+    ${card(v.levels, 'уровней в них')}
+    ${card(v.codes, 'кодов введено', `≈ ${Math.round(v.codes / v.games).toLocaleString('ru-RU')} на игру`)}
+  </div>`) +
+  sec('Форумы и фото', '// 04', `<div class="sgrid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+    ${card(v.topics, 'тем на форумах')}${card(v.posts, 'сообщений')}
+    ${card(v.polls, 'голосований', `${(v.votes || 0).toLocaleString('ru-RU')} голосов`)}
+    ${card(v.galleries, 'фото-галерей', `${(v.photos || 0).toLocaleString('ru-RU')} фотографий`)}
+  </div>`) +
+  `<a class="btn btn-ghost" href="${EN.src('Statistics.aspx')}">Статистика на 126.en.cx ↗</a>`;
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

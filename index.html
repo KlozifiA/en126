@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encounter 126 — КМВ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="home">
+
+<main>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="coord">44.0486° N · 43.0594° E — ПЯТИГОРСК, НОЧЬ</div>
+        <h1><span class="extrude">Жизнь —</span><br><span class="extrude">это</span> <span class="glow">игра.</span></h1>
+        <p class="lead">Городские ночные квесты Кавказских Минеральных Вод. Садись в машину, собирай команду, ищи коды — город уже ждёт.</p>
+        <div class="hero-cta">
+          <a class="btn btn-amber" id="heroPlay" href="#games">Ближайшая игра ↗</a>
+          <a class="btn btn-ghost" href="calendar.html">Календарь игр</a>
+        </div>
+        <div class="chips">
+          <span class="chip">СХВАТКА</span><span class="chip">ТОЧКИ</span><span class="chip">МОЗГОВОЙ ШТУРМ</span><span class="chip">ФОТООХОТА</span><span class="chip">+5</span>
+        </div>
+      </div>
+      <div class="stage"><article class="next" id="nextCard"></article></div>
+    </div>
+    <div class="scroll-hint">SCROLL<i></i></div>
+  </section>
+
+  <!-- GAMES -->
+  <section id="games">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">// 01 — Анонсы</div><h2 class="extrude">Ближайшие<br>игры</h2></div>
+        <div class="tabs" id="tabs">
+          <button class="on" data-f="city">Городские игры</button>
+          <button data-f="online">Онлайн игры</button>
+        </div>
+      </div>
+      <div class="games" id="grid"></div>
+      <div id="snapGames"></div>
+
+      <a class="tg rv" href="https://t.me/enkmv">
+        <div class="tg-ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M21.9 4.3 18.7 19.4c-.2 1-.9 1.3-1.7.8l-4.8-3.5-2.3 2.2c-.3.3-.5.5-1 .5l.3-4.9 8.9-8c.4-.3-.1-.5-.6-.2l-11 6.9-4.7-1.5c-1-.3-1-1 .2-1.5L20.6 3c.9-.3 1.6.2 1.3 1.3z"/></svg></div>
+        <div><h5>Подпишись</h5><p>Следи за анонсами в нашем Telegram-канале · @enkmv</p></div>
+        <span class="btn btn-ghost">Подписаться →</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- TYPES -->
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <div class="rv"><div class="eyebrow">// 02 — Форматы</div><h2 class="extrude">Во что играем</h2></div>
+      <div class="types rv">
+        <a class="type" style="--c:#8a3a14" href="calendar.html?zone=Real"><div class="ic">⚡</div><div class="glyph">01</div><h6>Схватка</h6><p>Ночная гонка по городу: задания, коды, скорость. Классика Encounter.</p></a>
+        <a class="type" style="--c:#0f5a78" href="calendar.html?zone=Points"><div class="ic">📍</div><div class="glyph">02</div><h6>Точки</h6><p>Маршрут из точек на карте. Штурмом или линейно — выбирают авторы.</p></a>
+        <a class="type" style="--c:#4a2a8a" href="calendar.html?zone=Virtual"><div class="ic">🧠</div><div class="glyph">03</div><h6>Мозговой штурм</h6><p>Онлайн-головоломки командой, не вставая с дивана.</p></a>
+        <a class="type" style="--c:#7a1f4a" href="calendar.html?zone=PhotoHunt"><div class="ic">📸</div><div class="glyph">04</div><h6>Фотоохота</h6><p>Найди место по кадру и сними его первым.</p></a>
+        <a class="type" style="--c:#1d6a3a" href="calendar.html?zone=Quiz"><div class="ic">❓</div><div class="glyph">05</div><h6>Викторина</h6><p>Эрудиция на скорость — вопросы, таймер, рейтинг.</p></a>
+        <a class="type" style="--c:#6a5a14" href="calendar.html?zone=Caching"><div class="ic">🗺</div><div class="glyph">06</div><h6>Кэшинг</h6><p>Тайники по координатам в горах и парках КМВ.</p></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERS -->
+  <section id="leaders">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <div><div class="eyebrow">// 03 — Зал славы</div><h2 class="extrude">Лучшие<br>в домене</h2></div>
+      </div>
+      <div class="leaders">
+        <div class="panel rv">
+          <h3>ТОП 5 личного состава <span id="lnkUsers"></span></h3>
+          <p class="sub">По сумме очков в домене 126</p>
+          <div class="podium-scene" id="podScene"><div class="podium" id="podium"></div></div>
+          <ul class="list" id="restPlayers"></ul>
+        </div>
+        <div style="display:grid;gap:28px;align-content:start">
+          <div class="panel rv">
+            <h3>ТОП 5 команд <span id="lnkTeams"></span></h3>
+            <p class="sub">Очки · участников в команде · капитан</p>
+            <div class="teams3d" id="teams"></div>
+          </div>
+          <div class="panel rv">
+            <h3>Рейтинг авторов <a href="authors.html">все →</a></h3>
+            <p class="sub">Оценки авторских игр по типам · отсортировано по Схватке</p>
+            <table class="authors-t" id="authorsTop"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section>
+    <div class="wrap">
+      <div class="sec-head rv"><div><div class="eyebrow">// 04 — Цифры</div><h2 class="extrude">Личный состав домена</h2></div>
+        <a class="btn btn-ghost" href="stats.html">Подробная статистика →</a></div>
+      <div class="stats" id="stats"></div>
+      <div class="online rv" id="online"></div>
+    </div>
+  </section>
+</main>
+
+<script src="data/home.js"></script>
+<script src="data/games.js"></script>
+<script src="data/authors.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const H = window.EN_HOME, G = window.EN_GAMES.games, esc = EN.esc;
+
+/* игры с главной, дополненные данными страницы игры (дата, заявки, обложка) */
+const games = H.games.map(g => {
+  const d = G[g.id] || {};
+  const f = Object.fromEntries((d.fields || []).map(x => [x[0], x[1]]));
+  const start = EN.parseEnDate(f['Начало игры']);
+  const teamsTxt = f['В игре примут участие'] || f['В игре приняли участие'] || '';
+  return Object.assign({}, g, {
+    num: d.num, img: d.img, authors: d.authors || [], start,
+    teams: (d.accepted || []).length || parseInt(teamsTxt) || 0,
+    limit: (f['Играем'] || '').match(/ограничение (\d+)/)?.[1],
+    online: g.type === 'Мозговой штурм',
+  });
+});
+
+/* ---------- ближайшая игра ---------- */
+const next = games.find(g => !g.online) || games[0];
+const nf = Object.fromEntries((G[next.id]?.fields || []).map(x => [x[0], x[1]]));
+document.getElementById('heroPlay').href = `game.html?gid=${next.id}`;
+document.getElementById('nextCard').innerHTML = `
+  <span class="float-tag ft-1">◉ ${next.teams} ${EN.plural(next.teams, ['команда', 'команды', 'команд'])} в деле</span>
+  ${nf['Минимальный пробег'] ? `<span class="float-tag ft-2">MIN ПРОБЕГ — ${esc(nf['Минимальный пробег'])} КМ</span>` : ''}
+  <div class="next-img"><span class="badge live">Ближайшая игра</span>${EN.cover(next)}</div>
+  <div class="next-body">
+    <div class="next-type">${esc(next.type)} · ${esc(nf['Последовательность прохождения'] || '')}</div>
+    <h3>${esc(next.title)}</h3>
+    <div class="countdown" id="cd">${['ДНИ', 'ЧАСЫ', 'МИН', 'СЕК'].map(l => `<div class="cd"><b>00</b><span>${l}</span></div>`).join('')}</div>
+    <div class="meta">
+      <div><span>Старт</span><b>${next.start ? EN.fmtDate(next.start, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) + ' МСК' : ''}</b></div>
+      <div><span>Авторы</span><b>${next.authors.map(a => esc(a.name)).join(', ')}</b></div>
+    </div>
+    <a class="btn btn-amber" href="game.html?gid=${next.id}">Подробнее</a>
+  </div>`;
+EN.tilt(document.getElementById('nextCard'), 8);
+const cdEls = [...document.querySelectorAll('#cd b')];
+(function tick() {
+  const s = Math.max(0, Math.floor((next.start - Date.now()) / 1000));
+  [Math.floor(s / 86400), Math.floor(s % 86400 / 3600), Math.floor(s % 3600 / 60), s % 60]
+    .forEach((n, i) => cdEls[i].textContent = String(n).padStart(2, '0'));
+  setTimeout(tick, 1000);
+})();
+
+/* ---------- сетка анонсов ---------- */
+const grid = document.getElementById('grid');
+grid.innerHTML = games.map(g => {
+  const c = EN.color(g.type), cap = +(g.limit || 5);
+  const dots = Array.from({ length: Math.min(cap, 7) }, (_, i) => `<i class="${i < g.teams ? 'f' : ''}"></i>`).join('');
+  const date = g.start ? EN.fmtDate(g.start, { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+  return `<a class="gcard" data-f="${g.online ? 'online' : 'city'}" style="--accent:${c}" href="game.html?gid=${g.id}">
+    <div class="thumb"><span class="tag">${esc(g.type)}</span><span class="date">${date}</span>${EN.cover(g)}</div>
+    <div class="body"><h4>${esc(g.title)}</h4>
+      <div class="row"><span class="teams" title="Команд подано">${g.teams ? `<span class="dots">${dots}</span>` : ''}Команд: ${g.teams}</span>
+      <span class="authors">${g.authors.map(a => esc(a.name)).join(', ')}</span></div></div></a>`;
+}).join('');
+const setTab = f => {
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x.dataset.f === f));
+  document.querySelectorAll('.gcard').forEach(c => c.classList.toggle('hide', c.dataset.f !== f));
+};
+document.getElementById('tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTab(b.dataset.f); });
+setTab('city');
+document.querySelectorAll('.gcard').forEach(c => EN.tilt(c, 8, 10));
+document.getElementById('snapGames').innerHTML = EN.updated(H.updated);
+
+/* ---------- ТОП игроков: пьедестал + список ---------- */
+const P = H.players, lead = parseFloat(P[0].points.replace(/\s/g, '').replace(',', '.'));
+const step = (p, cls) => `<div class="step ${cls}"><div class="who">
+    <div class="avatar">${esc(p.name[0])}</div><b>${EN.user(p.name, p.id)}</b>
+    <span>${esc(p.points)} · ${esc(p.rank || p.rankText || '')}</span></div>
+  <div class="face f-left"></div><div class="face f-top"></div><div class="face f-side"></div>
+  <div class="face f-front"><span class="num">${p.pos}</span></div></div>`;
+document.getElementById('podium').innerHTML = step(P[1], 's2') + step(P[0], 's1') + step(P[2], 's3');
+document.getElementById('restPlayers').innerHTML = P.slice(3).map(p => {
+  const w = Math.round(parseFloat(p.points.replace(/\s/g, '').replace(',', '.')) / lead * 100);
+  return `<li><span class="pos">#${String(p.pos).padStart(2, '0')}</span>
+    ${p.rankImg ? `<img src="${p.rankImg}" alt="${esc(p.rank)}" title="${esc(p.rank)}" style="height:14px">` : ''}
+    <div class="nm">${EN.user(p.name, p.id)}<small>${esc(p.rank || '')}</small><div class="bar"><i data-w="${w}"></i></div></div>
+    <span class="pts">${esc(p.points)}</span></li>`;
+}).join('');
+document.getElementById('lnkUsers').innerHTML = EN.ext('UserList.aspx', 'все →');
+const pod = document.getElementById('podium'), podScene = document.getElementById('podScene');
+podScene.addEventListener('pointermove', e => {
+  const r = podScene.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5;
+  pod.style.transform = `rotateX(-14deg) rotateY(${-18 + x * 40}deg)${innerWidth < 760 ? ' scale(.72)' : ''}`;
+});
+podScene.addEventListener('pointerleave', () => pod.style.transform = '');
+
+/* ---------- ТОП команд ---------- */
+document.getElementById('teams').innerHTML = H.teams.map(t => `
+  <div class="tslab"><span class="r">${t.pos}</span>
+    <div class="nm" style="flex:1;min-width:0"><b>${EN.team(t.name, t.id)}</b>
+      <div class="fine">${t.members} ${EN.plural(t.members, ['участник', 'участника', 'участников'])} · капитан ${EN.user(t.captain, t.captainId)}</div></div>
+    <span style="font:600 13px var(--mono);color:var(--amber)">${esc(t.points)}</span></div>`).join('');
+document.getElementById('lnkTeams').innerHTML = EN.ext('Teams/TeamList.aspx', 'все →');
+
+/* ---------- ТОП-5 авторов ---------- */
+const A = window.EN_AUTHORS;
+const cell = v => v === '-' ? '<td><span class="na">—</span></td>' : `<td><span class="score dim">${esc(v)}</span></td>`;
+document.getElementById('authorsTop').innerHTML =
+  '<tr><th>#</th><th>Автор</th><th>Схватка</th><th>Точки</th><th>МШ</th></tr>' +
+  A.rows.slice(0, 5).map(r => {
+    const extra = r.scores.slice(3).map((v, i) => v !== '-' ? `${EN.byShort(A.heads[i + 3])} ${v}` : '').filter(Boolean).join(' · ');
+    return `<tr><td>${r.pos}</td><td><b>${EN.user(r.name, r.id)}</b>${extra ? `<small>${esc(extra)}</small>` : ''}</td>
+      <td><span class="score">${esc(r.scores[0])}</span></td>${cell(r.scores[1])}${cell(r.scores[2])}</tr>`;
+  }).join('');
+
+/* ---------- цифры ---------- */
+const S = H.stats, n = v => +String(v).replace(/\s/g, '');
+document.getElementById('stats').innerHTML = [
+  [S.domainUsers, 'участников в домене', 8], [S.domainTeams, 'команд в домене', 4],
+  [S.projectUsers, 'участников во всей сети', -4], [S.projectTeams, 'команд в проекте', -8],
+].map(([v, l, ry]) => `<div class="stat rv" style="--ry:${ry}deg"><div class="ring"></div><b data-n="${n(v)}">0</b><span>${l}</span></div>`).join('');
+document.getElementById('online').innerHTML = `<i></i>Сейчас на сайте: ${esc(S.guests)} ${EN.plural(n(S.guests), ['гость', 'гостя', 'гостей'])} · ${esc(S.online)} ${EN.plural(n(S.online), ['участник', 'участника', 'участников'])} &nbsp;·&nbsp; Новобранцы за неделю: ${esc(S.newbies)}`;
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

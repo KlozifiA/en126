@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Архив игр — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="archive" data-scene="lite">
+<main class="page"><div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html">Главная</a> / Архив игр</div>
+    <h1 class="page-title"><span class="extrude">Прошедшие</span><br><span class="glow">игры</span></h1>
+    <p class="page-sub">Все игры домена 126.en.cx: победители, индекс качества и сложность. Новые — сверху.</p>
+    <div id="snap"></div>
+  </div>
+  <div class="toolbar">
+    <div class="row">
+      <div class="filters" id="types"></div>
+      <input class="input" id="q" type="search" placeholder="Поиск: игра, автор, победитель" aria-label="Поиск по архиву">
+    </div>
+  </div>
+  <div class="arch" id="list"></div>
+  <div class="pager" id="pager"></div>
+</div></main>
+
+<script src="data/archive.js"></script>
+<script src="data/games.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const A = window.EN_ARCHIVE, G = window.EN_GAMES.games, esc = EN.esc;
+const PER = 10, LOCAL_PAGES = Math.ceil(A.games.length / PER);
+let page = Math.min(Math.max(+EN.qs('page') || 1, 1), LOCAL_PAGES), type = 'Все', q = '';
+document.getElementById('snap').innerHTML = EN.updated(A.updated);
+
+const types = ['Все', ...new Set(A.games.map(g => g.type))];
+const tEl = document.getElementById('types');
+tEl.innerHTML = types.map(t => `<button class="pill${t === type ? ' on' : ''}" data-t="${esc(t)}" style="--pc:${t === 'Все' ? 'var(--amber)' : EN.color(t)}">${esc(t)}
+  <span class="n">${t === 'Все' ? A.games.length : A.games.filter(g => g.type === t).length}</span></button>`).join('');
+tEl.addEventListener('click', e => {
+  const b = e.target.closest('.pill'); if (!b) return;
+  type = b.dataset.t; page = 1;
+  tEl.querySelectorAll('.pill').forEach(x => x.classList.toggle('on', x === b)); render();
+});
+document.getElementById('q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); page = 1; render(); });
+
+function card(g) {
+  const d = G[g.id] || {}, c = EN.color(g.type);
+  const img = { id: g.id, type: g.type, num: g.num, img: d.img };
+  const hidden = /скрыт/i.test(g.winner);
+  return `<a class="acard" href="game.html?gid=${g.id}" style="--accent:${c}">
+    <div class="thumb">${EN.cover(img)}</div>
+    <div class="body">
+      <div class="top"><span class="tag-t" style="--tc:${c}">${esc(g.type)}</span><span>#${esc(g.num)}</span><span>·</span><span>${esc(g.date)}</span></div>
+      <h4>${esc(g.title)}</h4>
+      <div class="by">${g.authors.length > 1 ? 'Авторы' : 'Автор'} сценария: ${g.authors.map(esc).join(', ')}</div>
+      <div class="win"><span class="cup">🏆</span><div><small>Победитель игры</small><b>${hidden ? '<span class="muted">скрыто</span>' : esc(g.winner || '—')}</b></div></div>
+      <div class="nums">
+        <div><span>Команд</span><b>${esc(parseInt(g.teams) || '—')}</b></div>
+        <div><span>Индекс кач.</span><b style="color:var(--cyan)">${esc(g.q || '—')}</b></div>
+        <div><span>Сложность</span><b>${esc(g.k || '—')}</b></div>
+        <div><span>АКС</span><b>${esc(g.aks || '—')}</b></div>
+      </div>
+    </div></a>`;
+}
+
+function render() {
+  const filtered = A.games.filter(g => (type === 'Все' || g.type === type) &&
+    (!q || [g.title, g.winner, ...g.authors].join(' ').toLowerCase().includes(q)));
+  const filtering = type !== 'Все' || q;
+  const list = filtering ? filtered : filtered.slice((page - 1) * PER, page * PER);
+  document.getElementById('list').innerHTML = list.length ? list.map(card).join('')
+    : `<div class="empty" style="grid-column:1/-1"><b>Ничего не найдено</b>Поиск идёт по последним ${A.games.length} играм. Более старые — в архиве на 126.en.cx.</div>`;
+  document.querySelectorAll('.acard').forEach(c => EN.tilt(c, 5));
+
+  /* пагинация как на исходнике: 1..N; страницы, которых нет в макете, ведут на 126.en.cx */
+  const pg = document.getElementById('pager');
+  if (filtering) { pg.innerHTML = `<a href="${EN.src('Games.aspx')}">Весь архив на 126.en.cx ↗</a>`; return; }
+  let h = '';
+  for (let p = 1; p <= A.totalPages; p++) {
+    if (p > LOCAL_PAGES + 2 && p < A.totalPages) { if (!h.endsWith('…</span>')) h += '<span class="dots">…</span>'; continue; }
+    h += p === page ? `<span class="on">${p}</span>`
+      : p <= LOCAL_PAGES ? `<a href="?page=${p}" data-p="${p}">${p}</a>`
+      : `<a href="${EN.src('Games.aspx?page=' + p)}" title="Открыть на 126.en.cx">${p}↗</a>`;
+  }
+  pg.innerHTML = h;
+}
+document.getElementById('pager').addEventListener('click', e => {
+  const a = e.target.closest('a[data-p]'); if (!a) return;
+  e.preventDefault(); page = +a.dataset.p; history.replaceState(null, '', '?page=' + page); render(); scrollTo({ top: 0, behavior: 'smooth' });
+});
+render();
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

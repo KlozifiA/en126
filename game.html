@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Информация об игре — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="game" data-scene="lite">
+<main class="page"><div class="wrap" id="root"></div></main>
+
+<script src="data/games.js"></script>
+<script src="data/archive.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const esc = EN.esc, root = document.getElementById('root');
+const gid = EN.qs('gid'), g = window.EN_GAMES.games[gid];
+const inArchive = window.EN_ARCHIVE.games.some(a => String(a.id) === gid);
+
+if (!g) {
+  root.innerHTML = `<div class="page-head"><div class="crumbs"><a href="index.html">Главная</a> / Игра</div>
+    <h1 class="page-title">Игры нет<br>в макете</h1>
+    <p class="page-sub">В макет перенесены анонсы с главной и последние 30 игр архива. Эту игру можно открыть на исходном сайте.</p></div>
+    ${gid ? `<a class="btn btn-amber" href="${EN.src('GameDetails.aspx?gid=' + encodeURIComponent(gid))}">Открыть на 126.en.cx ↗</a>` : ''}`;
+} else {
+  document.title = `${g.title} — Encounter 126`;
+  const F = Object.fromEntries(g.fields.map(f => [f[0], f[1]]));
+  const start = EN.parseEnDate(F['Начало игры']), end = EN.parseEnDate(F['Время окончания']);
+  const finished = !!F['Статус игры'] || !!F['В игре приняли участие'];
+  const now = Date.now();
+  const state = finished || (end && now > end) ? 'done' : start && now >= start ? 'live' : 'soon';
+  const stateText = { soon: 'Скоро старт', live: 'Игра идёт', done: 'Игра завершена' }[state];
+  const c = EN.color(g.type);
+
+  /* поля — в том же порядке, что на исходнике; ссылки ведут туда же */
+  const val = (k, v) => {
+    if (k === 'Резонанс на форуме' && g.topic) return EN.ext(g.topic, esc(v));
+    if (k === 'Коэффициент сложности игры') return EN.ext(`GameComplexityRate.aspx?gid=${g.id}`, esc(v));
+    if (k === 'Индекс качества игры') return EN.ext(`GameQualityRate.aspx?gid=${g.id}`, esc(v));
+    if (/^В игре приняли участие/.test(k)) return esc(v.replace(/\s*\(статистика\)/, '')) + ' · ' + EN.ext(`GameStat.aspx?gid=${g.id}`, 'статистика');
+    if (/^Список администраторов/.test(k)) return esc(v.replace(/\s*\(подробнее\)/, '')) + ' · ' + EN.ext(`LevelAccessHistory.aspx?gid=${g.id}`, 'подробнее');
+    if (k === 'Времени осталось') return `<span id="left">${esc(v)}</span>`;
+    return esc(v);
+  };
+  const rows = [['Авторы игры', g.authors.map(a => EN.user(a.name, a.id)).join(', ')]];
+  g.fields.forEach(([k, v]) => {
+    rows.push([k, val(k, v)]);
+    if (k === 'Начало игры' && start) rows.push(['Начало игры в вашей временной зоне',
+      start.toLocaleString('ru-RU') + ` (UTC ${-(new Date().getTimezoneOffset() / 60) >= 0 ? '+' : ''}${-(new Date().getTimezoneOffset() / 60)})`]);
+  });
+
+  const accepted = g.accepted.length
+    ? `<div class="blk rv"><h3>${finished ? 'Приняты к участию' : 'Приняты к участию'} ${g.accepted.length} ${EN.plural(g.accepted.length, ['команда', 'команды', 'команд'])}</h3>
+        <div class="chips-l">${g.accepted.map(t => EN.team(t.name, t.id)).join('')}</div></div>` : '';
+
+  const top = g.top10.rows.length ? `<div class="blk rv"><h3>ТОП-10 игры</h3><div class="tbl-wrap"><table class="tbl top10">
+      <tr>${g.top10.head.map((h, i) => `<th class="${i ? '' : 'c'}">${esc(h || '#')}</th>`).join('')}</tr>
+      ${g.top10.rows.map(r => `<tr><td class="c"><span class="place">${esc(r[0].replace('#', '').trim())}</span></td>
+        <td class="t-title">${esc(r[1])}</td>${r.slice(2).map((v, i) => `<td class="mono${i === r.length - 4 ? ' gold' : ''}">${esc(v)}</td>`).join('')}</tr>`).join('')}
+    </table></div></div>` : '';
+
+  const desc = (g.tabs.length || g.intro) ? `<div class="blk rv"><h3>От автора игры</h3>
+    ${g.intro && g.intro.replace(/<img[^>]+data\/games[^>]+>/, '').replace(/<[^>]+>/g, '').trim()
+      ? `<div class="solo desc" style="margin-bottom:18px">${g.intro.replace(/<p>\s*<img[^>]+data\/games[^>]+>\s*<\/p>/, '')}</div>` : ''}
+    ${g.tabs.length ? `<div class="gtabs"><nav>${g.tabs.map((t, i) => `<button class="${i ? '' : 'on'}" data-i="${i}">${t.icon ? `<img src="${t.icon}" alt="">` : ''}${esc(t.name)}</button>`).join('')}</nav>
+      <div>${g.tabs.map((t, i) => `<div class="pane desc${i ? '' : ' on'}">${t.html}</div>`).join('')}</div></div>` : ''}
+    </div>` : '';
+
+  root.innerHTML = `
+    <div class="page-head">
+      <div class="crumbs"><a href="index.html">Главная</a> / <a href="${inArchive ? 'archive.html' : 'index.html#games'}">${inArchive ? 'Архив игр' : 'Анонсы'}</a> / Информация об игре</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
+        <span class="tag-t" style="--tc:${c}">${esc(g.type)}</span>
+        ${g.num ? `<span class="fine">#${esc(g.num)} в домене · ID ${g.id}</span>` : ''}
+      </div>
+      <h1 class="page-title">${esc(g.title)}</h1>
+    </div>
+    <div class="g-hero">
+      <div class="stage"><div class="g-cover" id="cover">${EN.cover(g)}</div></div>
+      <div class="g-side">
+        <span class="status ${state}">${state === 'live' ? '● ' : ''}${stateText}</span>
+        ${state === 'soon' && start ? `<div class="countdown" id="cd" style="margin:0">${['ДНИ', 'ЧАСЫ', 'МИН', 'СЕК'].map(l => `<div class="cd"><b>00</b><span>${l}</span></div>`).join('')}</div>` : ''}
+        <div class="actions">
+          ${g.enter && state !== 'done' ? `<a class="btn btn-amber" href="${g.enter}">Вход в игру</a>` : ''}
+          ${g.feeLink ? `<a class="btn btn-ghost locked" title="Доступно после входа" href="${g.feeLink}">Подать заявку</a>` : ''}
+          ${finished ? `<a class="btn btn-amber" href="${EN.src('GameStat.aspx?gid=' + g.id)}">Статистика игры</a>` : ''}
+          ${g.topic ? `<a class="btn btn-ghost locked" title="Доступно после входа" href="${g.topic}">Обсуждение</a>` : ''}
+        </div>
+        <dl class="kv">${rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join('')}</dl>
+        ${state !== 'done' ? `<div class="note"><b>Оценка игры.</b> Приём оценок начнётся сразу после прохождения последнего уровня.</div>` : ''}
+      </div>
+    </div>
+    ${accepted}${top}${desc}
+    <div class="blk">${EN.updated(window.EN_GAMES.updated)} <a class="fine" style="margin-left:10px" href="${EN.src('GameDetails.aspx?gid=' + g.id)}">Эта игра на 126.en.cx ↗</a></div>`;
+
+  EN.tilt(document.getElementById('cover'), 7);
+  root.querySelectorAll('.gtabs nav button').forEach(b => b.addEventListener('click', () => {
+    root.querySelectorAll('.gtabs nav button').forEach(x => x.classList.toggle('on', x === b));
+    root.querySelectorAll('.gtabs .pane').forEach((p, i) => p.classList.toggle('on', i === +b.dataset.i));
+  }));
+  // «Времени осталось» и отсчёт — живые, как таймер на исходнике
+  const left = document.getElementById('left'), cd = [...root.querySelectorAll('#cd b')];
+  (function tick() {
+    const s = (start - Date.now()) / 1000;
+    if (left) left.textContent = s > 0 ? EN.span(s) : 'игра началась';
+    if (cd.length) {
+      const v = Math.max(0, Math.floor(s));
+      [Math.floor(v / 86400), Math.floor(v % 86400 / 3600), Math.floor(v % 3600 / 60), v % 60].forEach((n, i) => cd[i].textContent = String(n).padStart(2, '0'));
+    }
+    setTimeout(tick, 1000);
+  })();
+}
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

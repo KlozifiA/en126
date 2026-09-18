@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Календарь игр — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="calendar" data-scene="lite">
+<main class="page"><div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html">Главная</a> / Календарь игр</div>
+    <h1 class="page-title"><span class="extrude">Календарь</span><br><span class="glow">игр</span></h1>
+    <p class="page-sub">Игры всей сети Encounter. Игры домена КМВ подсвечены.</p>
+    <div id="snap"></div>
+  </div>
+
+  <div class="toolbar">
+    <div class="row">
+      <div class="filters" id="scope">
+        <button class="pill on" data-s="global">Глобальный</button>
+        <button class="pill" data-s="local">Локальный</button>
+        <button class="pill" data-s="corp">Корпоративный</button>
+      </div>
+      <label id="countryBox" class="hide" style="display:flex;align-items:center;gap:8px"><span class="lbl">Страна</span>
+        <select class="select" id="country"></select></label>
+    </div>
+    <div class="filters" id="zones"></div>
+    <div class="row">
+      <div class="filters" id="status"></div>
+      <div class="filters" id="kind"></div>
+    </div>
+  </div>
+
+  <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+  <div class="pager" id="pager"></div>
+</div></main>
+
+<script src="data/calendar.js"></script>
+<script src="data/games.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const C = window.EN_CALENDAR, G = window.EN_GAMES.games, esc = EN.esc;
+const PER = 20;
+const tzOff = -new Date().getTimezoneOffset() / 60, tz = (tzOff >= 0 ? '+' : '') + tzOff; // как DateToLocalString на исходнике
+const Z = C.zones; // [zone, name, short]
+const st = {
+  scope: 'global', country: '-1',
+  zone: Z.some(z => z[0] === EN.qs('zone')) || EN.qs('zone') === 'all' ? EN.qs('zone') : 'Virtual', // по умолчанию как на исходнике — МШ
+  status: EN.qs('status') === 'Active' ? 'Active' : 'Coming',
+  kind: EN.qs('type') === 'Single' ? 'Single' : 'Team',
+  page: 1,
+};
+document.getElementById('snap').innerHTML = EN.updated(C.updated);
+
+const zonesOf = () => st.zone === 'all' ? Z.map(z => z[0]) : [st.zone];
+const items = (zone, status, kind) => C.items[`${zone}|${status}|${kind}`] || [];
+const count = (status, kind) => zonesOf().reduce((s, z) => {
+  const c = C.counts[`${z}|${status}|Team`] || {};
+  if (kind) return s + items(z, status, kind).length;
+  return s + (c[status] ?? 0);
+}, 0);
+
+function rows() {
+  if (st.scope === 'corp') return [];
+  let r = zonesOf().flatMap(z => items(z, st.status, st.kind).map(x => Object.assign({ zone: z }, x)));
+  if (st.scope === 'local' && st.country !== '-1') r = r.filter(x => x.country === st.country);
+  return r.sort((a, b) => new Date(a.start) - new Date(b.start));
+}
+
+/* «Начало через»: две крупшие единицы, как таймер en.cx (DisplayTwoTimes) */
+function until(iso) {
+  const s = Math.floor((new Date(iso) - Date.now()) / 1000);
+  if (s <= 0) return '<span style="color:#35e08a">идёт</span>';
+  const parts = EN.span(s).split(' ');
+  return parts.slice(0, 4).join(' ');
+}
+
+function renderFilters() {
+  document.getElementById('zones').innerHTML =
+    `<button class="pill${st.zone === 'all' ? ' on' : ''}" data-z="all">Все</button>` +
+    Z.map(([z, name, s]) => `<button class="pill${st.zone === z ? ' on' : ''}" data-z="${z}" style="--pc:${EN.color(name)}" title="${esc(name)}">
+      ${esc(st.zone === z ? name : s)}</button>`).join('');
+  const fin = zonesOf().reduce((s, z) => s + ((C.counts[`${z}|Coming|Team`] || {}).Finished || 0), 0);
+  const zq = st.zone === 'all' ? 'all' : st.zone;
+  document.getElementById('status').innerHTML =
+    `<button class="pill${st.status === 'Coming' ? ' on' : ''}" data-st="Coming">Предстоящие игры <span class="n">${count('Coming')}</span></button>
+     <button class="pill${st.status === 'Active' ? ' on' : ''}" data-st="Active">Активные игры <span class="n">${count('Active')}</span></button>
+     <a class="pill" href="${EN.src(`GameCalendar.aspx?zone=${zq}&status=Finished&type=${st.kind}`)}" title="Открыть на 126.en.cx">Прошедшие игры <span class="n">${fin.toLocaleString('ru-RU')}</span> ↗</a>`;
+  document.getElementById('kind').innerHTML =
+    `<button class="pill${st.kind === 'Team' ? ' on' : ''}" data-k="Team">Командные игры <span class="n">${count(st.status, 'Team')}</span></button>
+     <button class="pill${st.kind === 'Single' ? ' on' : ''}" data-k="Single">Одиночные игры <span class="n">${count(st.status, 'Single')}</span></button>`;
+  document.querySelectorAll('#scope .pill').forEach(b => b.classList.toggle('on', b.dataset.s === st.scope));
+  document.getElementById('countryBox').classList.toggle('hide', st.scope !== 'local');
+}
+
+function render() {
+  renderFilters();
+  const all = rows(), pages = Math.max(1, Math.ceil(all.length / PER));
+  st.page = Math.min(st.page, pages);
+  const list = all.slice((st.page - 1) * PER, st.page * PER);
+  const tbl = document.getElementById('tbl');
+  if (!list.length) {
+    tbl.innerHTML = `<tr><td><div class="empty"><b>Игр нет</b>${st.scope === 'corp' ? 'Корпоративных игр в календаре сейчас нет.' : 'По выбранным фильтрам ничего не запланировано.'}</div></td></tr>`;
+  } else {
+    tbl.innerHTML = `<tr><th>ID игры</th><th>Начало через</th><th>Домен</th><th>Дата и время начала, UTC ${tz}</th><th>Название игры</th><th>Автор(ы) игры</th><th class="r">Взнос</th></tr>` +
+      list.map(x => {
+        const home = x.domain === '126.en.cx';
+        const zn = Z.find(z => z[0] === x.zone);
+        const href = home && G[x.id] ? `game.html?gid=${x.id}` : x.link;
+        return `<tr${home ? ' style="background:rgba(255,178,63,.07)"' : ''}>
+          <td class="mono"><span class="muted">#${esc(x.num)}/</span>${x.id}</td>
+          <td class="mono" data-until="${x.start}" style="white-space:nowrap">${until(x.start)}</td>
+          <td><a href="https://${esc(x.domain)}/">${esc(x.domain)}</a>${home ? '<span class="here">КМВ</span>' : ''}</td>
+          <td class="mono" style="white-space:nowrap">${new Date(x.start).toLocaleString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+          <td>${st.zone === 'all' ? `<span class="tag-t" style="--tc:${EN.color(zn[1])};margin-right:8px">${zn[2]}</span>` : ''}<a class="t-title" href="${href}">${esc(x.title)}</a></td>
+          <td>${x.authors.map(([n, i]) => `${esc(n)}${i ? ` <span style="color:var(--cyan);font:600 11px var(--mono)">(${esc(i)})</span>` : ''}`).join(', ')}</td>
+          <td class="r mono gold" style="white-space:nowrap">${esc(x.fee)}</td></tr>`;
+      }).join('');
+  }
+  document.getElementById('pager').innerHTML = pages > 1
+    ? Array.from({ length: pages }, (_, i) => i + 1 === st.page ? `<span class="on">${i + 1}</span>` : `<a href="#" data-p="${i + 1}">${i + 1}</a>`).join('') : '';
+  const url = new URLSearchParams({ zone: st.zone, status: st.status, type: st.kind });
+  history.replaceState(null, '', '?' + url);
+}
+
+/* страны для «Локального» — из данных календаря */
+const countries = [...new Set(Object.values(C.items).flat().map(x => x.country).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ru'));
+document.getElementById('country').innerHTML = '<option value="-1">Не важно</option>' + countries.map(c => `<option>${esc(c)}</option>`).join('');
+document.getElementById('country').addEventListener('change', e => { st.country = e.target.value; st.page = 1; render(); });
+
+document.querySelector('.toolbar').addEventListener('click', e => {
+  const b = e.target.closest('button.pill'); if (!b) return;
+  if (b.dataset.s) st.scope = b.dataset.s;
+  if (b.dataset.z) st.zone = b.dataset.z;
+  if (b.dataset.st) st.status = b.dataset.st;
+  if (b.dataset.k) st.kind = b.dataset.k;
+  st.page = 1; render();
+});
+document.getElementById('pager').addEventListener('click', e => {
+  const a = e.target.closest('a[data-p]'); if (!a) return;
+  e.preventDefault(); st.page = +a.dataset.p; render();
+  document.querySelector('.toolbar').scrollIntoView({ behavior: 'smooth' });
+});
+setInterval(() => document.querySelectorAll('[data-until]').forEach(td => td.innerHTML = until(td.dataset.until)), 30000);
+render();
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

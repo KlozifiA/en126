@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Авторы игр — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="authors" data-scene="lite">
+<main class="page"><div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html">Главная</a> / Список авторов</div>
+    <h1 class="page-title"><span class="extrude">Авторы</span><br><span class="glow">игр</span></h1>
+    <p class="page-sub">Индекс качества игр каждого автора по типам. Нажмите на заголовок столбца, чтобы отсортировать.</p>
+    <div id="snap"></div>
+  </div>
+  <div class="toolbar">
+    <div class="row">
+      <div class="filters">
+        <span class="pill on">домена 126.en.cx</span>
+        <a class="pill" href="https://126.en.cx/GameAuthors.aspx">со всех доменов ↗</a>
+      </div>
+      <input class="input" id="q" type="search" placeholder="Найти автора" aria-label="Найти автора">
+    </div>
+  </div>
+  <div class="aut-grid" id="podium"></div>
+  <div class="tbl-wrap"><table class="tbl" id="tbl"></table></div>
+</div></main>
+
+<script src="data/authors.js"></script>
+<script src="assets/app.js"></script>
+<script>
+const A = window.EN_AUTHORS, esc = EN.esc;
+const num = v => v === '-' ? null : parseFloat(v.replace(',', '.'));
+let sortCol = 0, q = '';
+document.getElementById('snap').innerHTML = EN.updated(A.updated);
+const heads = A.heads.map(s => EN.byShort(s));
+
+/* лидеры по выбранному столбцу */
+function podium(sorted) {
+  const col = heads[sortCol], c = EN.color(col);
+  document.getElementById('podium').innerHTML = sorted.slice(0, 3).map((r, i) => `
+    <div class="acard3 rv" style="--tc:${c}"><span class="big">${i + 1}</span>
+      <span class="tag-t" style="--tc:${c}">${esc(col)}</span>
+      <h4>${EN.user(r.name, r.id)}</h4>
+      ${r.scores.map((v, j) => v === '-' ? '' : `<div class="row"><span>${esc(heads[j])}</span><span class="sc${j === sortCol ? ' top' : ''}">${esc(v)}</span></div>
+        <div class="hbar" style="--tc:${EN.color(heads[j])}"><i style="width:${num(v) * 10}%"></i></div>`).join('')}
+    </div>`).join('');
+  EN.reveal();
+}
+
+function render() {
+  // как на исходнике: по выбранному типу, авторы без оценки по нему — в конце, в исходном порядке
+  const sorted = A.rows.slice().sort((a, b) => {
+    const x = num(a.scores[sortCol]), y = num(b.scores[sortCol]);
+    if (x === null && y === null) return +a.pos - +b.pos;
+    if (x === null) return 1; if (y === null) return -1;
+    return y - x;
+  });
+  podium(sorted.filter(r => num(r.scores[sortCol]) !== null));
+  const list = sorted.filter(r => !q || r.name.toLowerCase().includes(q));
+  document.getElementById('tbl').innerHTML =
+    `<tr><th class="c">#</th><th>Автор</th>${heads.map((h, i) => `<th class="c sort${i === sortCol ? ' on' : ''}" data-c="${i}" title="Сортировать: ${esc(h)}">
+      <span class="tag-t" style="--tc:${EN.color(h)}">${esc(A.heads[i])}</span></th>`).join('')}</tr>` +
+    (list.length ? list.map(r => `<tr><td class="c mono muted">${sorted.indexOf(r) + 1}</td>
+      <td class="t-title">${EN.user(r.name, r.id)}</td>
+      ${r.scores.map((v, i) => {
+        const n = num(v);
+        const cls = n === null ? 'na' : i === sortCol ? 'top' : n >= 8 ? 'hi' : '';
+        return `<td class="c"><span class="sc ${cls}">${n === null ? '—' : esc(v)}</span></td>`;
+      }).join('')}</tr>`).join('')
+      : `<tr><td colspan="10"><div class="empty"><b>Автор не найден</b></div></td></tr>`);
+}
+document.getElementById('tbl').addEventListener('click', e => {
+  const th = e.target.closest('th[data-c]'); if (!th) return;
+  sortCol = +th.dataset.c; render();
+});
+document.getElementById('q').addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); render(); });
+render();
+</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

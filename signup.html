@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Регистрация — Encounter 126</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/pages.css">
+</head>
+<body data-page="signup" data-scene="lite">
+<main class="auth">
+  <div class="stage" style="width:min(480px,100%)">
+    <div class="auth-card" id="card">
+      <div class="eyebrow">// Новобранцам</div>
+      <h1>Регистрация</h1>
+      <p class="page-sub">Один аккаунт на всю сеть Encounter — играйте в КМВ и в любом другом городе.</p>
+
+      <a class="btn btn-vk" href="https://126.en.cx/SignUp.aspx">Войти через ВКонтакте</a>
+      <div class="or">или заполните форму</div>
+
+      <ol class="steps">
+        <li><span>Придумайте <b>логин</b> и <b>пароль</b>, повторите пароль</span></li>
+        <li><span>Укажите <b>телефон</b> с кодом страны и <b>e-mail</b></span></li>
+        <li><span>Введите <b>проверочный код</b> с картинки</span></li>
+      </ol>
+
+      <a class="btn btn-amber" href="https://126.en.cx/SignUp.aspx">Перейти к регистрации →</a>
+
+      <div class="note"><b>Уже в сети?</b> Следующий шаг — команда: <a class="link" href="https://126.en.cx/Addons.aspx?aid=19159">как зарегистрировать команду</a>.</div>
+      <div class="auth-links">
+        <a href="login.html">Уже есть аккаунт? Войти</a>
+      </div>
+      <p class="legal">Регистрируясь, вы принимаете условия <a href="https://126.en.cx/Manifest.aspx">Генеральной декларации</a>,
+        <a href="https://en.cx/personal">Политики обработки персональных данных</a> и <a href="https://en.cx/oferta">Оферты</a>.</p>
+    </div>
+  </div>
+</main>
+<script src="assets/app.js"></script>
+<script>EN.tilt(document.getElementById('card'), 6);</script>
+<script type="module" src="assets/scene.js"></script>
+</body>
+</html>

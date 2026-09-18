@@ -121,11 +121,13 @@
     ['forum', EN.src('Guestbook.aspx'), 'Форум'],
     ['search', EN.src('PlayerSearch.aspx'), 'Поиск по ID'],
   ];
-  const cube = '<div class="logo-cube"><div class="cube"><b>126</b><b>EN</b><b>126</b><b>EN</b><b></b><b></b></div></div>';
+  // логотип с исходного сайта 126.en.cx
+  const LOGO = 'https://d1.endata.cx/images/personal/83369/en_logo2s.png';
+  const logo = h => `<img class="logo-img" src="${LOGO}" width="205" height="54" alt="Encounter" style="height:${h}px">`;
   const header = document.createElement('header');
   header.className = 'nav';
   header.innerHTML = `
-    <a href="index.html" class="logo">${cube}<div>ENCOUNTER<small>КМВ · 126.EN.CX</small></div></a>
+    <a href="index.html" class="logo" aria-label="Encounter — главная">${logo(40)}</a>
     <ul>${NAV.map(([k, h, t]) => {
       const lock = EN.isLocked(h);
       return `<li><a href="${h}" class="${k === page ? 'on' : ''}${lock ? ' locked' : ''}"${lock ? ' title="Доступно после входа"' : ''}>${t}</a></li>`;
@@ -148,7 +150,7 @@
   const footer = document.createElement('footer');
   footer.innerHTML = `<div class="wrap">
     <div class="foot">
-      <a href="index.html" class="logo">${cube}<div>ENCOUNTER<small>СЕТЬ ГОРОДСКИХ ИГР</small></div></a>
+      <a href="index.html" class="logo" aria-label="Encounter — главная">${logo(50)}</a>
       <nav class="foot-links">
         <a href="index.html">Главная</a><a href="archive.html">Архив игр</a><a href="calendar.html">Календарь</a>
         <a href="authors.html">Авторы</a><a href="stats.html">Статистика</a>

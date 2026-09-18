@@ -137,7 +137,7 @@ document.getElementById('heroPlay').href = `game.html?gid=${next.id}`;
 document.getElementById('nextCard').innerHTML = `
   <span class="float-tag ft-1">◉ ${next.teams} ${EN.plural(next.teams, ['команда', 'команды', 'команд'])} в деле</span>
   ${nf['Минимальный пробег'] ? `<span class="float-tag ft-2">MIN ПРОБЕГ — ${esc(nf['Минимальный пробег'])} КМ</span>` : ''}
-  <div class="next-img"><span class="badge live">Ближайшая игра</span>${EN.cover(next)}</div>
+  <div class="next-img"><span class="badge live">Ближайшая игра</span>${EN.cover(next).replace('loading="lazy"', 'loading="eager" fetchpriority="high"')}</div>
   <div class="next-body">
     <div class="next-type">${esc(next.type)} · ${esc(nf['Последовательность прохождения'] || '')}</div>
     <h3>${esc(next.title)}</h3>

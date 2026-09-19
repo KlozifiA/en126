@@ -7,15 +7,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=0c462f3">
-<link rel="stylesheet" href="assets/pages.css?v=0c462f3">
+<link rel="stylesheet" href="assets/style.css?v=e89a596">
+<link rel="stylesheet" href="assets/pages.css?v=e89a596">
 </head>
 <body data-page="game" data-scene="lite">
 <main class="page"><div class="wrap" id="root"></div></main>
 
-<script src="data/games.js?v=0c462f3"></script>
-<script src="data/archive.js?v=0c462f3"></script>
-<script src="assets/app.js?v=0c462f3"></script>
+<script src="data/games.js?v=e89a596"></script>
+<script src="data/archive.js?v=e89a596"></script>
+<script src="data/help.js?v=e89a596"></script>
+<script src="assets/app.js?v=e89a596"></script>
 <script>
 const esc = EN.esc, root = document.getElementById('root');
 const gid = EN.qs('gid'), g = window.EN_GAMES.games[gid];
@@ -35,6 +36,8 @@ if (!g) {
   const state = finished || (end && now > end) ? 'done' : start && now >= start ? 'live' : 'soon';
   const stateText = { soon: 'Скоро старт', live: 'Игра идёт', done: 'Игра завершена' }[state];
   const c = EN.color(g.type);
+  const H = window.EN_HELP || { types: {}, items: {} };
+  const help = H.items[g.help || H.types[g.type]];
 
   /* поля — в том же порядке, что на исходнике; ссылки ведут туда же */
   const val = (k, v) => {
@@ -75,6 +78,7 @@ if (!g) {
       <div class="crumbs"><a href="index.html">Главная</a> / <a href="${inArchive ? 'archive.html' : 'index.html#games'}">${inArchive ? 'Архив игр' : 'Анонсы'}</a> / Информация об игре</div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
         <span class="tag-t" style="--tc:${c}">${esc(g.type)}</span>
+        ${help ? `<button class="help-q" id="helpBtn" type="button" aria-haspopup="dialog" title="Что такое «${esc(g.type)}»?">?</button>` : ''}
         ${g.num ? `<span class="fine">#${esc(g.num)} в домене · ID ${g.id}</span>` : ''}
       </div>
       <h1 class="page-title">${esc(g.title)}</h1>
@@ -98,6 +102,26 @@ if (!g) {
     <div class="blk">${EN.updated(window.EN_GAMES.updated)} <a class="fine" style="margin-left:10px" href="${EN.src('GameDetails.aspx?gid=' + g.id)}">Эта игра на 126.en.cx ↗</a></div>`;
 
   EN.tilt(document.getElementById('cover'), 7);
+  /* «(?)» — объяснение типа игры, как всплывающее окно на исходнике */
+  if (help) {
+    const dlg = document.createElement('div');
+    dlg.className = 'modal'; dlg.hidden = true;
+    dlg.innerHTML = `<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+      <div class="modal-head"><span class="tag-t" style="--tc:${c}">Помощь</span>
+        <h2 id="helpTitle">${esc(g.type)}</h2>
+        <button class="modal-x" type="button" aria-label="Закрыть">✕</button></div>
+      <div class="desc modal-body">${help.html}</div>
+      <div class="modal-foot"><a class="fine" href="${help.src}">Справка на 126.en.cx ↗</a>
+        <button class="btn btn-amber modal-ok" type="button">Понятно</button></div></div>`;
+    dlg.querySelectorAll('a[data-local]').forEach(a => { a.removeAttribute('target'); a.removeAttribute('rel'); });
+    document.body.append(dlg);
+    const btn = document.getElementById('helpBtn');
+    const open = () => { dlg.hidden = false; document.body.style.overflow = 'hidden'; void dlg.offsetWidth; dlg.classList.add('on'); dlg.querySelector('.modal-x').focus(); };
+    const close = () => { dlg.classList.remove('on'); document.body.style.overflow = ''; setTimeout(() => dlg.hidden = true, 200); btn.focus(); };
+    btn.addEventListener('click', open);
+    dlg.addEventListener('click', e => { if (e.target === dlg || e.target.closest('.modal-x, .modal-ok')) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && !dlg.hidden) close(); });
+  }
   root.querySelectorAll('.gtabs nav button').forEach(b => b.addEventListener('click', () => {
     root.querySelectorAll('.gtabs nav button').forEach(x => x.classList.toggle('on', x === b));
     root.querySelectorAll('.gtabs .pane').forEach((p, i) => p.classList.toggle('on', i === +b.dataset.i));
@@ -115,6 +139,6 @@ if (!g) {
   })();
 }
 </script>
-<script type="module" src="assets/scene.js?v=0c462f3"></script>
+<script type="module" src="assets/scene.js?v=e89a596"></script>
 </body>
 </html>

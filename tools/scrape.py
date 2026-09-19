@@ -168,6 +168,8 @@ def scrape_game(gid):
     g['type'] = txt(info.select_one('[id$=lblGameTypeName]'))
     g['num'] = txt(info.select_one('[id$=lblGameNum]'))
     g['title'] = txt(info.select_one('#lnkGameTitle, a[ID=lnkGameTitle]'))
+    hl = next((x for x in info.select('a[href*="HowTo.aspx?about="]') if 'about=UTC' not in x['href']), None)
+    g['help'] = re.search(r'about=(\w+)', hl['href']).group(1) if hl else None
     topic = info.select_one('a[ID=lnkGbTopic]')
     g['topic'] = BASE + topic['href'].lstrip('/') if topic else None
     g['authors'] = [{'name': a.get_text(strip=True), 'id': uid_of(a['href'])}
@@ -237,6 +239,39 @@ def scrape_game(gid):
         m = re.search(r'src="(https://[^"]+/data/games/[^"]+)"', g['intro'] + ''.join(t['html'] for t in g['tabs']))
         g['img'] = m.group(1) if m else None
     return g
+
+
+# ---------------------------------------------------------------- help «(?)»
+def help_key(gid):
+    s = soup(get(f'GameDetails.aspx?gid={gid}'))
+    info = s.select_one('table.gameInfo')
+    hl = next((x for x in info.select('a[href*="HowTo.aspx?about="]') if 'about=UTC' not in x['href']), None) if info else None
+    return re.search(r'about=(\w+)', hl['href']).group(1) if hl else None
+
+
+def scrape_help(games):
+    """Справка по типу игры — то, что открывает «(?)» рядом с типом на странице игры."""
+    types, items = {}, {}
+    for g in games.values():
+        t = g['type']
+        if t in types:
+            continue
+        key = g.get('help') or help_key(g['id'])
+        if not key:
+            continue
+        types[t] = key
+        if key in items:
+            continue
+        s = soup(get(f'HowTo.aspx?about={key}'))
+        box = s.select_one('.divCenter')
+        html = clean_html(list(box.contents)) if box else ''
+        # «Предстоящие игры» → календарь макета
+        html = re.sub(r'https://126\.en\.cx/GameCalendar\.aspx\?([^"]*)',
+                      lambda m: 'calendar.html?' + m.group(1).replace('&amp;', '&'), html)
+        html = html.replace('href="calendar.html', 'data-local="1" href="calendar.html')
+        items[key] = {'type': t, 'html': html, 'src': BASE + f'HowTo.aspx?about={key}'}
+        print('help', t, key, len(html))
+    return {'types': types, 'items': items}
 
 
 # ---------------------------------------------------------------- archive
@@ -370,7 +405,7 @@ def scrape_stats():
 
 
 if __name__ == '__main__':
-    what = sys.argv[1:] or ['home', 'archive', 'games', 'calendar', 'authors', 'stats']
+    what = sys.argv[1:] or ['home', 'archive', 'games', 'help', 'calendar', 'authors', 'stats']
     stamp = datetime.now(timezone.utc).isoformat()
     home = arch = None
     if 'home' in what or 'games' in what:
@@ -386,6 +421,10 @@ if __name__ == '__main__':
                 games[gid] = g
                 print('game', gid, g['title'], len(g['tabs']), 'tabs')
         save('games', 'EN_GAMES', {'updated': stamp, 'games': games})
+    if 'help' in what:
+        raw = open(os.path.join(OUT, 'games.js'), encoding='utf-8').read()
+        gs = json.loads(raw.split('=', 1)[1].strip().rstrip(';'))['games']
+        h = scrape_help(gs); h['updated'] = stamp; save('help', 'EN_HELP', h)
     if 'calendar' in what:
         c = scrape_calendar(); c['updated'] = stamp; save('calendar', 'EN_CALENDAR', c)
     if 'authors' in what:

@@ -135,6 +135,13 @@
     <a class="btn btn-amber" href="login.html">Войти →</a>
     <button class="burger" aria-label="Меню" aria-expanded="false">☰</button>`;
   document.body.prepend(header);
+  /* плашка: это концепт, а не официальный сайт */
+  const bar = document.createElement('div');
+  bar.className = 'concept-bar';
+  bar.setAttribute('role', 'note');
+  bar.innerHTML = `<span class="cb-dot"></span><span class="cb-long"><b>Концепт редизайна 126.en.cx.</b> Не официальный сайт Encounter —</span><span class="cb-short"><b>Концепт редизайна.</b> Не официальный сайт —</span>
+    <a href="${SRC}">оригинал ↗</a>`;
+  document.body.prepend(bar);
   const burger = header.querySelector('.burger');
   const close = () => { header.classList.remove('open'); burger.setAttribute('aria-expanded', false); burger.textContent = '☰'; };
   burger.addEventListener('click', () => {

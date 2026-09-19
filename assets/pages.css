@@ -245,3 +245,21 @@ th.sort.on::after{content:" ▼"}
 .modal-body{padding:20px 24px;overflow:auto}
 .modal-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 24px 20px;border-top:1px solid var(--line);flex-wrap:wrap}
 @media (max-width:760px){.modal-head h2{font-size:19px}.modal-foot .btn{width:100%;justify-content:center}}
+
+/* плашка «концепт» */
+:root{--bar-h:38px}
+body{padding-top:var(--bar-h)}
+.concept-bar{position:fixed;top:0;left:0;right:0;z-index:30;height:var(--bar-h);display:flex;align-items:center;justify-content:center;gap:10px;padding:0 16px;
+  background:linear-gradient(90deg,#b8560a,#ff9a2e 50%,#b8560a);color:#1a0d00;font:600 13px/1.2 var(--body);text-align:center;
+  box-shadow:0 6px 24px -8px rgba(255,140,30,.8);white-space:nowrap;overflow:hidden}
+.concept-bar b{font-weight:800}
+.concept-bar a{color:#1a0d00;font-weight:800;text-decoration:underline;text-underline-offset:2px}
+.cb-dot{width:8px;height:8px;border-radius:50%;background:#1a0d00;flex:none;animation:blink 1.6s infinite}
+.cb-short{display:none}
+.nav{top:calc(var(--bar-h) + 12px)}
+@media (max-width:760px){
+  :root{--bar-h:34px}
+  .concept-bar{font-size:11.5px;gap:5px;padding:0 8px}
+  .cb-dot{display:none}
+  .cb-long{display:none}.cb-short{display:inline}
+}

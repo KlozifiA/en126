@@ -74,6 +74,7 @@
     /** Свои обложки для игр без картинки на исходнике (gid → файл). Важнее данных из data/*.js */
     COVERS: {
       81231: 'assets/img/ghostbusters-3.jpg', // Охотники за привидениями III
+      82749: 'assets/img/kubok.jpg', // Кубок
     },
     cover(g) {
       g = Object.assign({}, g, { img: EN.COVERS[g.id] || g.img });

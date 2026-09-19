@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>/* свежая версия: если браузер показал устаревшую копию из кэша — перезагрузить новую */(function(V){fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(j.v&&j.v!==V){var u=new URL(location.href);if(u.searchParams.get('_v')!==j.v){u.searchParams.set('_v',j.v);location.replace(u.href)}}})['catch'](function(){})})('3ff8424-1789804997')</script>
+<script>/* свежая версия: если открыта устаревшая копия (из кэша, по кнопке «Назад» или давно открытая вкладка) — перезагрузить новую */(function(V){function chk(){fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){if(j.v&&j.v!==V){var u=new URL(location.href);if(u.searchParams.get('_v')!==j.v){u.searchParams.set('_v',j.v);location.replace(u.href)}}})['catch'](function(){})}chk();addEventListener('pageshow',function(e){if(e.persisted)chk()});document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')chk()})})('b550fc5-1789805313')</script>
 <title>Статистика — Encounter 126</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=3ff8424-1789804997">
-<link rel="stylesheet" href="assets/pages.css?v=3ff8424-1789804997">
+<link rel="stylesheet" href="assets/style.css?v=b550fc5-1789805313">
+<link rel="stylesheet" href="assets/pages.css?v=b550fc5-1789805313">
 </head>
 <body data-page="stats" data-scene="lite">
 <main class="page"><div class="wrap">
@@ -22,9 +22,9 @@
   <div id="root"></div>
 </div></main>
 
-<script src="data/stats.js?v=3ff8424-1789804997"></script>
-<script src="data/home.js?v=3ff8424-1789804997"></script>
-<script src="assets/app.js?v=3ff8424-1789804997"></script>
+<script src="data/stats.js?v=b550fc5-1789805313"></script>
+<script src="data/home.js?v=b550fc5-1789805313"></script>
+<script src="assets/app.js?v=b550fc5-1789805313"></script>
 <script>
 const S = window.EN_STATS, H = window.EN_HOME, esc = EN.esc, t = S.text;
 document.getElementById('snap').innerHTML = EN.updated(S.updated);
@@ -90,6 +90,6 @@ document.getElementById('root').innerHTML =
   </div>`) +
   `<a class="btn btn-ghost" href="${EN.src('Statistics.aspx')}">Статистика на 126.en.cx ↗</a>`;
 </script>
-<script type="module" src="assets/scene.js?v=3ff8424-1789804997"></script>
+<script type="module" src="assets/scene.js?v=b550fc5-1789805313"></script>
 </body>
 </html>

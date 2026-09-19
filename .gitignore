@@ -4,3 +4,5 @@ tools/_*.txt
 tools/_*.html
 .DS_Store
 Thumbs.db
+# исходники картинок (в сайт идут сжатые копии из assets/img)
+/*.png

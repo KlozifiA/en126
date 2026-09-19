@@ -71,7 +71,12 @@
         <circle cx="220" cy="42" r="16" fill="${c}" opacity=".85"/>${bars}
         <text x="14" y="160" font-family="Unbounded" font-weight="900" font-size="54" fill="none" stroke="${c}" stroke-opacity=".35">${String(g.num || s).slice(-3)}</text></svg></div>`;
     },
+    /** Свои обложки для игр без картинки на исходнике (gid → файл). Важнее данных из data/*.js */
+    COVERS: {
+      81231: 'assets/img/ghostbusters-3.jpg', // Охотники за привидениями III
+    },
     cover(g) {
+      g = Object.assign({}, g, { img: EN.COVERS[g.id] || g.img });
       return g.img ? `<img loading="lazy" src="${g.img}" alt="" onerror="this.outerHTML=EN.poster(${EN.esc(JSON.stringify({ id: g.id, type: g.type, num: g.num }))})">` : EN.poster(g);
     },
 

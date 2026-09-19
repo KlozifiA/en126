@@ -77,6 +77,7 @@
       82749: 'assets/img/kubok.jpg', // Кубок
       81653: 'assets/img/igra-126.jpg', // Игра 126
       82300: 'assets/img/energiya.jpg', // Энергия
+      80552: 'assets/img/kod-123.jpg', // ***123
     },
     cover(g) {
       g = Object.assign({}, g, { img: EN.COVERS[g.id] || g.img });

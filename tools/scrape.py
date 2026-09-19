@@ -265,10 +265,6 @@ def scrape_help(games):
         s = soup(get(f'HowTo.aspx?about={key}'))
         box = s.select_one('.divCenter')
         html = clean_html(list(box.contents)) if box else ''
-        # «Предстоящие игры» → календарь макета
-        html = re.sub(r'https://126\.en\.cx/GameCalendar\.aspx\?([^"]*)',
-                      lambda m: 'calendar.html?' + m.group(1).replace('&amp;', '&'), html)
-        html = html.replace('href="calendar.html', 'data-local="1" href="calendar.html')
         items[key] = {'type': t, 'html': html, 'src': BASE + f'HowTo.aspx?about={key}'}
         print('help', t, key, len(html))
     return {'types': types, 'items': items}
@@ -405,7 +401,8 @@ def scrape_stats():
 
 
 if __name__ == '__main__':
-    what = sys.argv[1:] or ['home', 'archive', 'games', 'help', 'calendar', 'authors', 'stats']
+    # календарь ведёт на 126.en.cx (там он в реальном времени); собрать снимок: python tools/scrape.py calendar
+    what = sys.argv[1:] or ['home', 'archive', 'games', 'help', 'authors', 'stats']
     stamp = datetime.now(timezone.utc).isoformat()
     home = arch = None
     if 'home' in what or 'games' in what:

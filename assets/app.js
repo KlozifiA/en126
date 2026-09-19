@@ -124,7 +124,7 @@
   const page = document.body.dataset.page || '';
   const NAV = [
     ['archive', 'archive.html', 'Архив'],
-    ['calendar', 'calendar.html', 'Календарь'],
+    ['calendar', EN.src('GameCalendar.aspx'), 'Календарь'],
     ['authors', 'authors.html', 'Авторы'],
     ['stats', 'stats.html', 'Статистика'],
     ['forum', EN.src('Guestbook.aspx'), 'Форум'],
@@ -168,7 +168,7 @@
     <div class="foot">
       <a href="index.html" class="logo" aria-label="Encounter — главная">${logo(50)}</a>
       <nav class="foot-links">
-        <a href="index.html">Главная</a><a href="archive.html">Архив игр</a><a href="calendar.html">Календарь</a>
+        <a href="index.html">Главная</a><a href="archive.html">Архив игр</a><a href="${EN.src('GameCalendar.aspx')}">Календарь</a>
         <a href="authors.html">Авторы</a><a href="stats.html">Статистика</a>
         <a href="login.html">Вход</a><a href="signup.html">Регистрация</a>
       </nav>

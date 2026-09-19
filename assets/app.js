@@ -76,6 +76,7 @@
       81231: 'assets/img/ghostbusters-3.jpg', // Охотники за привидениями III
       82749: 'assets/img/kubok.jpg', // Кубок
       81653: 'assets/img/igra-126.jpg', // Игра 126
+      82300: 'assets/img/energiya.jpg', // Энергия
     },
     cover(g) {
       g = Object.assign({}, g, { img: EN.COVERS[g.id] || g.img });
